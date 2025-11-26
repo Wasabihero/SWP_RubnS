@@ -1,29 +1,44 @@
 import random
 
 
-# ---------------- Hauptprogramm ----------------
 def main():
-    """
-    Simuliert 100000 Pokerhände und berechnet die
-    Häufigkeit und den prozentualen Anteil der Kombinationen.
-    """
+    # Vergleichswerte aus dem Internet in %
+referenceOdds = {
+    "Royal Flush": 0.000154,
+    "Straight Flush": 0.00139,
+    "Four of a Kind": 0.0240,
+    "Full House": 0.1441,
+    "Flush": 0.1965,
+    "Straight": 0.3925,
+    "Three of a Kind": 2.1128,
+    "Two Pair": 4.7539,
+    "One Pair": 42.2569,
+    "High Card": 50.1177
+}
     totalGames = 100000
     results = simulateGames(totalGames)
 
     print(f"\nSimulation von {totalGames} Pokerhänden:")
-    print("========================================")
+    print("========================================\n")
 
-    for combination, count in sorted(results.items(),
-                                     key=lambda x: -x[1]):
+    items = list(results.items())
+    items.sort(key=countSort, reverse=True)
+
+    for combination, count in items:
         percent = (count / totalGames) * 100
-        print(f"{combination:20s}: {count:8d}  ({percent:6.4f}%)")
+        ref = referenceOdds[combination]
+        difference = percent - ref
+
+        print(f"{combination:20s}: {count:8d}  "
+              f"({percent:7.4f}% | ref {ref:7.4f}% | "
+              f"Δ {difference:+7.4f}%)")
+
+def countSort(entry):
+    return entry[1]
 
 
 # ---------------- Simulation ----------------
 def simulateGames(gameCount):
-    """
-    Führt mehrere Poker-Spiele durch und zählt die Kombinationen.
-    """
     combinations = {
         "Royal Flush": 0,
         "Straight Flush": 0,
@@ -47,10 +62,6 @@ def simulateGames(gameCount):
 
 # ---------------- Hilfsfunktionen ----------------
 def drawUniqueValues(poolSize, drawCount):
-    """
-    Zufällige eindeutige Zahlen aus Bereich [0, poolSize)
-    ziehen (swap-to-end-Verfahren).
-    """
     pool = list(range(poolSize))
     results = []
 
@@ -58,24 +69,20 @@ def drawUniqueValues(poolSize, drawCount):
         index = random.randint(0, poolSize - 1 - i)
         results.append(pool[index])
         pool[index], pool[poolSize - 1 - i] = (
-            pool[poolSize - 1 - i],
-            pool[index]
+            pool[poolSize - 1 - i], pool[index]
         )
     return results
 
 
 def getRanks(hand):
-    """Gibt eine Liste der Kartenwerte (0–12) zurück."""
     return [card % 13 for card in hand]
 
 
 def getSuits(hand):
-    """Gibt eine Liste der Farben (0–3) zurück."""
     return [card // 13 for card in hand]
 
 
 def countRanks(hand):
-    """Zählt, wie oft jeder Kartenwert vorkommt."""
     counts = {}
     for rank in getRanks(hand):
         counts[rank] = counts.get(rank, 0) + 1
@@ -83,61 +90,48 @@ def countRanks(hand):
 
 
 def isPair(hand):
-    """True, wenn genau ein Paar vorhanden ist."""
     return list(countRanks(hand).values()).count(2) == 1
 
 
 def isTwoPair(hand):
-    """True, wenn zwei verschiedene Paare vorhanden sind."""
     return list(countRanks(hand).values()).count(2) == 2
 
 
 def isThreeOfKind(hand):
-    """True, wenn ein Drilling vorhanden ist."""
     return 3 in countRanks(hand).values()
 
 
 def isFourOfKind(hand):
-    """True, wenn ein Vierling vorhanden ist."""
     return 4 in countRanks(hand).values()
 
 
 def isFullHouse(hand):
-    """True, wenn Drilling + Paar."""
     values = countRanks(hand).values()
     return 3 in values and 2 in values
 
 
 def isFlush(hand):
-    """True, wenn alle Karten die gleiche Farbe haben."""
     suits = getSuits(hand)
     return len(set(suits)) == 1
 
 
 def isStraight(hand):
-    """True, wenn fünf aufeinanderfolgende Werte."""
     ranks = sorted(getRanks(hand))
-    # Ass kann auch niedrig sein (A,2,3,4,5)
-    if ranks == [0, 1, 2, 3, 12]:
-        return True
-    return all(ranks[i] + 1 == ranks[i + 1] for i in range(4))
+    # ternärer Operator anstelle von if/else
+    return True if ranks == [0, 1, 2, 3, 12] \
+        else all(ranks[i] + 1 == ranks[i + 1] for i in range(4))
 
 
 def isStraightFlush(hand):
-    """True, wenn gleichzeitig Straight und Flush."""
     return isStraight(hand) and isFlush(hand)
 
 
 def isRoyalFlush(hand):
-    """True, wenn 10–Ass der gleichen Farbe."""
     ranks = sorted(getRanks(hand))
     return isFlush(hand) and ranks == [8, 9, 10, 11, 12]
 
 
 def detectCombination(hand):
-    """
-    Ermittelt die Poker-Kombination der Hand.
-    """
     if isRoyalFlush(hand):
         return "Royal Flush"
     if isStraightFlush(hand):
