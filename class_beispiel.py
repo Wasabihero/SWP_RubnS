@@ -9,16 +9,22 @@ class Tier:
     """
 
     def __init__(self, name, alter):
-        # Attribute des Objekts
         self.name = name
         self.alter = alter
 
+    def __str__(self):
+        return f"Name: {self.name}, Alter: {self.alter}"
+
     def statusAnzeigen(self):
-        # Gibt Basisdaten aus
-        print(f"Name: {self.name}, Alter: {self.alter}")
+        """
+        Gibt den Status des Tieres aus.
+        """
+        print(self)
 
     def geraeuschMachen(self):
-        # Standardverhalten
+        """
+        Standardverhalten für Tiere.
+        """
         print("Das Tier macht ein Geräusch.")
 
 
@@ -28,13 +34,16 @@ class Hund(Tier):
     """
 
     def __init__(self, name, alter, rasse):
-        # Konstruktor der Basisklasse
         super().__init__(name, alter)
-
         self.rasse = rasse
 
+    def __str__(self):
+        return (
+            f"Name: {self.name}, Alter: {self.alter}, "
+            f"Rasse: {self.rasse}"
+        )
+
     def geraeuschMachen(self):
-        # Erweitert das Verhalten der Basisklasse
         super().geraeuschMachen()
         print(f"{self.name} bellt: Wuff!")
 
@@ -47,6 +56,12 @@ class Katze(Tier):
     def __init__(self, name, alter, lieblingsSpielzeug):
         super().__init__(name, alter)
         self.lieblingsSpielzeug = lieblingsSpielzeug
+
+    def __str__(self):
+        return (
+            f"Name: {self.name}, Alter: {self.alter}, "
+            f"Lieblingsspielzeug: {self.lieblingsSpielzeug}"
+        )
 
     def geraeuschMachen(self):
         print(f"{self.name} miaut: Miau!")
@@ -72,8 +87,12 @@ vogel = Vogel("Tweety", 1)
 hund.statusAnzeigen()
 hund.geraeuschMachen()
 
+print()
+
 katze.statusAnzeigen()
 katze.geraeuschMachen()
+
+print()
 
 vogel.statusAnzeigen()
 vogel.geraeuschMachen()
