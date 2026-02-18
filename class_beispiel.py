@@ -1,29 +1,32 @@
 # ==========================================
 # Thema: Tiere und Haustiere
-# Vererbung mit self und super()
+# Demonstration von Vererbung, self und super()
 # ==========================================
+
 
 class Tier:
     """
     Basisklasse für alle Tiere.
+    Enthält Eigenschaften und Verhalten,
+    die alle Tiere gemeinsam haben.
     """
 
     def __init__(self, name, alter):
+        # self verweist auf das aktuelle Objekt
+        # (das konkrete Tier, das gerade erstellt wird)
         self.name = name
         self.alter = alter
 
-    def __str__(self):
-        return f"Name: {self.name}, Alter: {self.alter}"
-
     def statusAnzeigen(self):
         """
-        Gibt den Status des Tieres aus.
+        Gibt allgemeine Informationen zum Tier aus.
         """
-        print(self)
+        print(f"Name: {self.name}, Alter: {self.alter}")
 
     def geraeuschMachen(self):
         """
-        Standardverhalten für Tiere.
+        Standardmethode, die von Unterklassen
+        überschrieben wird.
         """
         print("Das Tier macht ein Geräusch.")
 
@@ -31,37 +34,35 @@ class Tier:
 class Hund(Tier):
     """
     Unterklasse von Tier.
+    Repräsentiert einen Hund.
     """
 
     def __init__(self, name, alter, rasse):
+        # super() ruft den Konstruktor (__init__)
+        # der Basisklasse Tier auf
+        # Dadurch werden name und alter dort gesetzt
         super().__init__(name, alter)
+
+        # Eigenes Attribut der Unterklasse Hund
         self.rasse = rasse
 
-    def __str__(self):
-        return (
-            f"Name: {self.name}, Alter: {self.alter}, "
-            f"Rasse: {self.rasse}"
-        )
-
     def geraeuschMachen(self):
-        super().geraeuschMachen()
+        # Zugriff auf Attribute dieses konkreten Objekts
+        # über self
         print(f"{self.name} bellt: Wuff!")
 
 
 class Katze(Tier):
     """
     Unterklasse von Tier.
+    Repräsentiert eine Katze.
     """
 
     def __init__(self, name, alter, lieblingsSpielzeug):
+        # Aufruf des Konstruktors der Basisklasse Tier
         super().__init__(name, alter)
-        self.lieblingsSpielzeug = lieblingsSpielzeug
 
-    def __str__(self):
-        return (
-            f"Name: {self.name}, Alter: {self.alter}, "
-            f"Lieblingsspielzeug: {self.lieblingsSpielzeug}"
-        )
+        self.lieblingsSpielzeug = lieblingsSpielzeug
 
     def geraeuschMachen(self):
         print(f"{self.name} miaut: Miau!")
@@ -70,9 +71,12 @@ class Katze(Tier):
 class Vogel(Tier):
     """
     Unterklasse von Tier.
+    Repräsentiert einen Vogel.
     """
 
     def geraeuschMachen(self):
+        # Kein eigener Konstruktor nötig,
+        # daher wird automatisch der der Basisklasse genutzt
         print(f"{self.name} zwitschert: Piep!")
 
 
@@ -87,12 +91,8 @@ vogel = Vogel("Tweety", 1)
 hund.statusAnzeigen()
 hund.geraeuschMachen()
 
-print()
-
 katze.statusAnzeigen()
 katze.geraeuschMachen()
-
-print()
 
 vogel.statusAnzeigen()
 vogel.geraeuschMachen()
