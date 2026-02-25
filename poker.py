@@ -1,20 +1,36 @@
 import random
+import time
 
 
+def zeitmesser(funktion):
+    """Decorator: misst Laufzeit einer Funktion in Millisekunden."""
+    def wrapper(*args, **kwargs):
+        startZeit = time.perf_counter()
+        ergebnis = funktion(*args, **kwargs)
+        endZeit = time.perf_counter()
+
+        dauerMs = (endZeit - startZeit) * 1000.0
+        print(f"[Zeit] {funktion.__name__}: {dauerMs:.2f} ms")
+        return ergebnis
+    return wrapper
+
+
+@zeitmesser
 def main():
     # Vergleichswerte aus dem Internet in %
-referenceOdds = {
-    "Royal Flush": 0.000154,
-    "Straight Flush": 0.00139,
-    "Four of a Kind": 0.0240,
-    "Full House": 0.1441,
-    "Flush": 0.1965,
-    "Straight": 0.3925,
-    "Three of a Kind": 2.1128,
-    "Two Pair": 4.7539,
-    "One Pair": 42.2569,
-    "High Card": 50.1177
-}
+    referenceOdds = {
+        "Royal Flush": 0.000154,
+        "Straight Flush": 0.00139,
+        "Four of a Kind": 0.0240,
+        "Full House": 0.1441,
+        "Flush": 0.1965,
+        "Straight": 0.3925,
+        "Three of a Kind": 2.1128,
+        "Two Pair": 4.7539,
+        "One Pair": 42.2569,
+        "High Card": 50.1177
+    }
+
     totalGames = 100000
     results = simulateGames(totalGames)
 
@@ -33,12 +49,15 @@ referenceOdds = {
               f"({percent:7.4f}% | ref {ref:7.4f}% | "
               f"Δ {difference:+7.4f}%)")
 
+
 def countSort(entry):
     return entry[1]
 
 
 # ---------------- Simulation ----------------
+@zeitmesser
 def simulateGames(gameCount):
+    """Simuliert gameCount Pokerhände und zählt Kombinationen."""
     combinations = {
         "Royal Flush": 0,
         "Straight Flush": 0,
